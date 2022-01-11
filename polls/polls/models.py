@@ -2,6 +2,19 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
+class Poll(models.Model):
+    """Model Poll."""
+
+    name = models.CharField(max_length=200)  # noqa: WPS432
+    start_date = models.DateField()
+    end_date = models.DateField()
+    description = models.TextField(blank=True)
+
+    def __str__(self) -> str:
+        """Represent model."""
+        return f'{self.name} ({self.pk})'
+
+
 class Question(models.Model):
     """Model Question."""
 
@@ -10,6 +23,7 @@ class Question(models.Model):
         ('single select', 'single select'),
         ('multiple select', 'multiple select'),
     ]
+    poll = models.ManyToManyField(Poll, related_name='questions')
     text = models.TextField()
     type = models.CharField(
         choices=types, max_length=30,  # noqa: WPS432
@@ -18,20 +32,6 @@ class Question(models.Model):
     def __str__(self) -> str:
         """Represent model."""
         return f'{self.text} ({self.type})'
-
-
-class Poll(models.Model):
-    """Model Poll."""
-
-    name = models.CharField(max_length=200)  # noqa: WPS432
-    start_date = models.DateField()
-    end_date = models.DateField()
-    description = models.TextField(blank=True)
-    question = models.ManyToManyField(Question, related_name='polls')
-
-    def __str__(self) -> str:
-        """Represent model."""
-        return f'{self.name} ({self.pk})'
 
 
 class Variant(models.Model):
